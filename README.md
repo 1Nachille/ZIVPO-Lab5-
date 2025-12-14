@@ -4,45 +4,41 @@
 ### Анализ инструментом Fortify
 Результаты сканирования:
 <img width="2556" height="1386" alt="Screenshot 2025-12-14 214809" src="https://github.com/user-attachments/assets/48f0e6c6-a162-4347-896e-63a578087765" />
-Описание уязввимости:
-Abstract:
-
-Hardcoded encryption keys could compromise system security in a way that is not easy to remedy.
-
-
-Explanation:
-
-It is never a good idea to hardcode an encryption key. Not only does hardcoding an encryption key allow all of the project's developers to view the encryption key, it also makes fixing the problem extremely difficult. After the code is in production, a software patch is required to change the encryption key. If the account protected by the encryption key is compromised, the owners of the system must choose between security and availability.
-
-
-Example 1: The following code uses a hardcoded encryption key to encrypt information:
-
-...
+Отчет по уязвимости:
+Тип уязвимости: Хардкодинг (жёсткая привязка) криптографического ключа
+Instance ID: 51DD573C9D1FF439DECD37FE4F612F52  
+1. Суть уязвимости
+В коде приложения используется жёстко заданный (hardcoded) ключ шифрования, то есть значение ключа напрямую указано в исходном коде как строковая или байтовая константа.
+```python
 from Crypto.Ciphers import AES
 encryption_key = b'_hardcoded__key_'
 cipher = AES.new(encryption_key, AES.MODE_CFB, iv)
 msg = iv + cipher.encrypt(b'Attack at dawn')
-...
-
-
-This code will run successfully, but anyone who has access to it will have access to the encryption key. After the program ships, there is likely no way to change the hardcoded encryption key _hardcoded__key_ unless the program is patched. A devious employee with access to this information can use it to compromise data encrypted by the system.
-
-
-
-
-Instance ID: 51DD573C9D1FF439DECD37FE4F612F52
-
-Priority Metadata Values:
-
-	IMPACT: 3.0
-
-	LIKELIHOOD: 2.4
-
-Legacy Priority Metadata Values:
-
-	SEVERITY: 4.0
-
-	CONFIDENCE: 5.0
+```
+2. Потенциальная опасность
+	- Раскрытие ключа: Любой, у кого есть доступ к исходному коду (разработчики, стажёры, злоумышленник при утечке кода), сразу получает доступ к ключу шифрования.
+	- Затруднённое исправление: После развёртывания приложения в продакшене изменение ключа возможно только через обновление кода и повторное развёртывание, что может быть технически сложно и дорого.
+	- Риск компрометации данных: Если ключ становится известен злоумышленнику, он может:
+		- Расшифровать все ранее зашифрованные данные.
+		- Подделать или подменить зашифрованные сообщения.
+	- Нарушение принципов безопасного хранения секретов: Ключи шифрования должны храниться вне исходного кода, в защищённых хранилищах (например, HashiCorp Vault, AWS Secrets Manager, переменные окружения с ограничением доступа и т.д.).
+3. Оценка риска (по данным Forify)
+| Параметр | Значение |
+| ----------- | ----------- |
+| Impact (Последствия)    | 3.0/5.0   |
+| Likelihood (Вероятность эксплуатации)    | 2.4/5.0   |
+| Severity (Общая серьезность)    | 4.0/5.0   |
+| Confidence (Уверенность в обнаружении)    | 5.0/5.0   |
+Согласно Fortify, эта критическая уязвимость может привести к серьезным последствиям при компрометации.
+4. Рекомендации по устранению
+	1. Удалить хардкодированный ключ из исходного кода.
+	2. Хранить ключи шифрования в безопасных внешних источниках, например:
+		- Переменные окружения (с ограничением доступа на уровне ОС/контейнера).
+		- Специализированные хранилища секретов: AWS Secrets Manager, Azure Key Vault, HashiCorp Vault.
+		- Зашифрованные конфигурационные файлы с контролем доступа.
+	3. Ограничьте доступ к хранилищу ключей только тем компонентам системы, которые действительно должны их использовать.
+	4. Реализуйте механизм ротации ключей, чтобы в случае компрометации можно было легко заменить ключ без изменения кода.
+	5. Проведите аудит всего кода на предмет других хардкодированных секретов (паролей, токенов, API-ключей и т.д.).
 ### Анализ инструментом Bandit
 Результаты сканирования:
   Run started:2025-12-14 17:26:13.132028+00:00
