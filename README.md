@@ -73,7 +73,7 @@ msg = iv + cipher.encrypt(b'Attack at dawn')
     </tr>
     <tr>
         <td>Low</td>
-        <td>3q</td>
+        <td>3</td>
     </tr>
 </table>
 
