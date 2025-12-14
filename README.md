@@ -76,6 +76,7 @@ msg = iv + cipher.encrypt(b'Attack at dawn')
         <td>3q</td>
     </tr>
 </table>
+
 1. CWE-502: Deserialization of Untrusted Data
 - Bandit ID: `B403` (импорт `pickle`) + `B301` (вызов `pickle.loads`)  
 - Строки: 7, 166  
