@@ -36,14 +36,18 @@ msg = iv + cipher.encrypt(b'Attack at dawn')
     </tr>
     <tr>
         <td>Impact (Последствия)</td>
-        <td>Likelihood (Вероятность эксплуатации)</td>
-		<td>Severity (Общая серьезность)</td>
-        <td>Confidence (Уверенность в обнаружении)</td>
+        <td>3.0/5.0</td>
     </tr>
     <tr>
-        <td>3.0/5.0</td>
+        <td>Likelihood (Вероятность эксплуатации)</td>
         <td>2.4/5.0</td>
-		<td>4.0/5.0</td>
+    </tr>
+    <tr>
+        <td>Severity (Общая серьезность)</td>
+        <td>4.0/5.0</td>
+    </tr>
+    <tr>
+        <td>Confidence (Уверенность в обнаружении)</td>
         <td>5.0/5.0</td>
     </tr>
 </table>
